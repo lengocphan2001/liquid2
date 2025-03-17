@@ -1,0 +1,48 @@
+{%assign section = settings[enable] | remove: 'section_'-%}
+{%capture imgStyle-%}{{section}}_style{%endcapture-%}
+
+{%capture imgShow-%}{{section}}_show{%endcapture-%}
+{%capture imgPos-%}{{section}}_pos{%endcapture-%}
+{%capture imgTitle-%}{{section}}_title{%endcapture-%}
+{%capture imgDesc-%}{{section}}_desc{%endcapture-%}
+{%capture imgUrl-%}{{section}}_url{%endcapture-%}
+{%capture imgWidth-%}{{section}}_width{%endcapture-%}
+{%capture imgHeight-%}{{section}}_height{%endcapture-%}
+{%capture imgName-%}{{section}}_img.jpg{%endcapture-%}
+
+{%assign imgtext_style = settings[imgStyle]-%}
+{%assign imgtext_pos = settings[imgPos]-%}
+
+<section class="section_imgtext section 
+							
+				{%if imgtext_style == "style1"%}style1{%else%}style2{%endif%} {%if imgtext_pos == "left"%}left-text{%endif%}
+				
+				
+				">
+	<div class="container card border-0">
+		<div class="imgtext_body {%unless settings[imgShow] %} 
+				d-flex
+				{%endunless%}">
+			<a class="imgtext_img" href="{{settings[imgUrl]-}}">
+				<picture>
+					<source media="(max-width: 991px)" srcset="{{imgName|  img_url:'large' | asset_url -}}">
+					<img loading="lazy"
+						 class="img-fluid mx-auto"
+						 src="{{imgName | asset_url-}}" 
+						 width="{{settings[imgWidth]-}}"
+						 height="{{settings[imgHeight]-}}"
+						 alt="imgtext_img"/>
+				</picture>
+			</a>
+			{%if settings[imgShow]-%} 
+			<div class="imgtext_content_wrap">
+				<div class="imgtext_content">
+					<h3 class="imgtext-title">{{settings[imgTitle]-}}</h3>
+					<p class="imgtext-desc">{{settings[imgDesc]-}}</p>
+					<a class="link" href="{{settings[imgUrl]-}}">Xem chi tiết</a>
+				</div>
+			</div>
+			{%endif-%}
+		</div>
+	</div>
+</section>

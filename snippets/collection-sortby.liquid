@@ -1,0 +1,22 @@
+<div class="coll-sortby d-flex justify-content-between align-items-center">
+	<div class="sortPagiBar">
+	<div class="sort-cate clearfix">
+		<div id="sort-by" class="d-flex align-items-baseline">
+			<label class="left">
+				<span class=''>Sắp xếp: </span>
+			</label>
+			<select class="content_ul" onchange="sortby(this)">     
+				<option data-sort="name:asc" value="alpha-asc">Tên A &rarr; Z</option>
+				<option data-sort="name:desc" value="alpha-desc">Tên Z &rarr; A</option>
+				<option data-sort="price_min:asc" value="price-asc">Giá tăng dần</option>
+				<option data-sort="price_min:desc" value="price-desc">Giá giảm dần</option>
+				<option data-sort="created_on:desc" value="created-desc">Hàng mới</option>
+			</select>			
+		</div>
+	</div>
+</div>
+<div id="open-filters" class="btn open-filters d-lg-none d-block p-0">
+	<i class="fa fa-filter"></i>
+	<span>Lọc</span>
+</div>
+</div>

@@ -1,0 +1,46 @@
+{%- if settings.ega_sm_enable -%}
+  <script>
+    window.EGASmartSearchConfigs = {
+      // color
+      colorBg: '{{ settings.ega_sm_color_bg | default: "#fff" }}',
+      colorBgHover: '{{ settings.ega_sm_color_bg_hover | default: "#f7f7f7" }}',
+      colorItemTextTitle: '{{ settings.ega_sm_color_item_text_title | default: "#0288d1" }}',
+      colorItemTextPrice: '{{ settings.ega_sm_color_item_text_price | default: "#014e70" }}',
+      colorItemTextCompareAtPrice: '{{ settings.ega_sm_color_item_text_compare_at_price | default: "#a7a7a7" }}',
+      colorItemTextViewAll: '{{ settings.ega_sm_color_item_text_view_all | default: "#0288d1" }}',
+      colorHeaderText: '{{ settings.ega_sm_color_header | default: "#a0a0a0" }}',
+      navBg: '{{ settings.ega_sm_color_label_bg | default: "#e2e8f0" }}',
+      navTextColor: '{{ settings.ega_sm_color_label_text | default: "#000" }}',
+      navBgActive: '{{ settings.ega_sm_color_label_bg_active | default: "#a0a0a0" }}',
+      navTextColorActive: '{{ settings.ega_sm_color_label_text_active | default: "#fff" }}',
+      colorLoading: '{{ settings.ega_sm_color_loading | default: "#f00" }}',
+      // general
+      searchAccuracy: '{{ settings.ega_sm_product_accuracy | default: "title" }}',
+      searchWidth: '{{ settings.ega_sm_search_width | default: 380 }}px',
+      searchHeight: '{{ settings.ega_sm_search_height | default: 500 }}px',
+      // product
+      productSortby: '{{ settings.ega_sm_product_sort_by }}',
+      productLimit: {{ settings.ega_sm_product_limit | default: 3 }},
+      // article
+      displayArticle: {{ settings.ega_sm_show_article | default: false }},
+      articleLimit: {{ settings.ega_sm_article_limit | default: 3 }},
+      moneyFormat: "{{ shop.money_format }}",
+      shopDomain: '',
+      textHeaderSectionTitle: '{{ settings.ega_sm_search_header | default: "Kết quả tìm kiếm cho" }}',
+      textProductSectionTitle: '{{ settings.ega_sm_product_heading | default: "Sản phẩm" }}',
+      textArticleSectionTitle: '{{ settings.ega_sm_article_heading | default: "Bài viết" }}',
+      notFound: '{{ settings.ega_sm_notfound | default: "Không tìm thấy kết quả" }}',
+      textFrom: '',
+      textShowAll: '{{ settings.ega_sm_show_all | default: "Hiển thị sản phẩm có chứa" }}'
+    }
+    {%- if template == 'search' -%}
+    const params = new URLSearchParams(location.search);
+    const searchType = params.get('type')
+    if (EGASmartSearchConfigs.displayArticle &&
+        searchType &&
+        searchType === 'product,article') {
+      $('#search-result').css('display', 'none')
+    }
+    {%- endif -%}
+  </script>
+  {%- endif -%}

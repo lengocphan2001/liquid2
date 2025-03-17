@@ -1,0 +1,101 @@
+<section class="section_lookbook">
+	<div class="container">
+		<h2 class="heading-bar__title">{{settings.lookbook_title-}}</h2>
+		<div class="lookbooks-container row">
+			{%include 'lookbook_list'-%}
+		</div>
+		<div id="lookbooks-stick-product" class="hidden"></div>
+	</div>
+</section>
+
+<script>
+	var egaLookBook = {
+		slider: function(){
+			$('.section_lookbook:not(.lookbook--oneproduct) .lookbooks-container').slick({
+				autoplay: false,
+				autoplaySpeed: 6000,
+				dots: false,
+				arrows: true,
+				infinite: false,
+				speed: 300,
+				slidesToShow: 5,
+				slidesToScroll: 5,
+				centerMode: false,
+				responsive: [
+					{
+
+						breakpoint: 991,
+						settings: {
+							slidesToShow: 2,
+							slidesToScroll: 2
+						}
+					},
+					{
+						breakpoint: 767,
+						settings: {
+							slidesToShow: 1,
+							slidesToScroll: 1
+						}
+					}
+				]
+			});
+		},
+		popover: function() {
+			$('.popover-dot[data-toggle="popover"]').popover({
+				html: true,
+				animation: true,
+				placement: function(popover, trigger) {
+					var placement = jQuery(trigger).attr('data-placement');
+					var dataClass = jQuery(trigger).attr('data-class');
+					jQuery(trigger).addClass('is-active');
+					jQuery(popover).addClass(dataClass);
+					return placement;
+				},
+				content: function() {
+					var elementId = $(this).attr("data-popover-content");
+					return $(elementId).html();
+				},
+			});
+			setTimeout(function() {
+				$('.lookbooks-1 .popover-dot:eq(0)').click();
+			}, 3000);
+			jQuery("body").on("click", '.popover-dot[data-toggle="popover"]', function(e) {
+				$('.popover-dot[data-toggle="popover"]').each(function() {
+					if (!$(this).is(e.target) && $(this).has(e.target).length === 0 && $('.popover').has(e.target).length === 0) {
+						$(this).popover('hide');
+					}
+				});
+			});
+			$('body').on('hidden.bs.popover', function(e) {
+				$(e.target).data('bs.popover').inState = { click: false, hover: false, focus: false };
+			});
+		},
+		getLookBook: function(element) {
+			try {
+				{%assign idArr = pdIdList | split:"##"-%}
+				{%capture idData-%}[{%for id in idArr-%}{%if forloop.last-%}{{id-}}{%else-%}{{id-}},{%endif-%}{%endfor-%}]{%endcapture-%}			
+				var idList = {{idData-}};
+				if (idList && idList.length && Array.isArray(idList)){ 
+					//let filter =  '(id:product=' + idList.join(' || id:product=') + ')'
+					let filter = idList.map(el => `(id:product=${el})`).join('||');
+					$.ajax({
+						url: `/search?q=filter=${filter}&view=lookbook`,
+						success: function(data) {
+							if (data && data.length) {
+								let wrapper = $(element);
+								wrapper.html(data)
+							} else {
+								$(element).remove()
+							}
+						}
+					})
+				} else {
+					$(element).remove()
+				}
+			} catch (e) {
+				console.log(e)
+				$(element).remove()
+			}
+		}
+	};
+</script>

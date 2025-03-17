@@ -1,0 +1,36 @@
+<div  class="section_slider clearfix">
+	<div class="{%if settings.slider_type == 'box' %} container py-2 {%endif%}">
+
+	<div class="home-slider">
+		{% assign count = 0-%}
+		{%for s2 in (1..3)%}
+		{%capture enable_slide-%}slider_{{s2}}_enable{%endcapture%}
+		{%capture naviimage-%}slider_{{s2}}.jpg{%endcapture%}
+		{%capture url-%}slider_{{s2}}_url{%endcapture%}
+		{%capture alt-%}slider_{{s2}}_alt{%endcapture%}
+		{%capture width-%}slider_{{s2}}_width{%endcapture%}
+		{%capture height-%}slider_{{s2}}_height{%endcapture%}
+				{%capture slide_color-%}slider_{{s2}}_color{%endcapture%}
+		{%if settings[enable_slide]%}
+		<div class="items text-center" data-color="{{ settings[slide_color] }}">
+			<a  href="{{ settings[url]}}" title="{{ settings[alt] }}">
+				<picture>
+					<source media="(max-width: 480px)" srcset="{{ naviimage | img_url:'large' | asset_url  }}">
+					<img class=" img-fluid mx-auto" 
+						 loading="lazy" 
+						 {%if count > 0 -%}
+						 {%endif -%}
+						 src="{{ naviimage | asset_url  }}" 
+						 width="{{settings[width]}}"
+						 height="{{settings[height]}}"
+						 alt="{{ settings[alt] }}"/>
+				</picture>
+			</a>
+		</div>
+		{%assign count = count | plus: 1 -%}
+		{%endif%}
+		{%endfor%}
+	</div>
+		
+	</div>
+</div>

@@ -1,0 +1,271 @@
+{% include 'breadcrumb' -%} 
+<section class="blogpage section">
+	<div class="container article-wraper card py-2 border-0" itemscope itemtype="https://schema.org/Article">
+		<meta itemprop="mainEntityOfPage" content="{{ article.url }}">
+		<meta itemprop="description" content="{{ article.summary | strip_html }}">
+		<meta itemprop="author" content="{{ article.author }}">
+		<meta itemprop="headline" content="{{ article.title | truncate: 100}}">
+		<meta itemprop="image" content="https:{%if article.image.src == null %}{{ 'logo.png' | asset_url }}{%else%}{{ article.image.src }}{%endif%}">
+		<meta itemprop="datePublished" content="{{ article.published_on | date: 'dd-MM-yyyy' }}">
+		<meta itemprop="dateModified" content="{{ article.created_on | date: 'dd-MM-yyyy' }}">
+		<div itemprop="publisher" itemscope itemtype="https://schema.org/Organization">
+			<div itemprop="logo" itemscope itemtype="https://schema.org/ImageObject">
+				<img loading="lazy" class="hidden" src="{{'logo.png'|asset_url}}" alt="{{ shop.name }}"/>
+				<meta itemprop="url" content="https:{{'logo.png'|asset_url}}">
+				<meta itemprop="width" content="400">
+				<meta itemprop="height" content="60">
+			</div>
+			<meta itemprop="name" content="{{shop.name}}">
+		</div>
+		<div class="wrap_background_aside padding-top-0 margin-bottom-40 ">
+			<div class="row">		
+				{% capture related_article -%}
+				{% if settings.blogs_related_enable and  blog.articles.size > 1 -%}
+				<div class=" aside-item blog-aside-article">
+					<div class="">
+						<h2 class="heading-bar__title"><span><a class="link" href="{{blog.url}}" title="{{ settings.blogs_related_title }}">{{settings.blogs_related_title-}}</a></span></h2>
+					</div>
+					<div class="aside-content-article aside-content margin-top-0">
+						<div class="blog-image-list" >
+							<div class="row">
+								{% assign count = 0 -%}
+								{% assign article_related_list_limit = settings.blogs_related_limit -%}
+								{% assign current_handle = article.title | handleize -%}
+								{% for art in blog.articles -%}
+								{% assign art_handle = art.title | handleize -%}
+								{% if current_handle != art_handle -%}
+								<div class="col-md-3 col-12">
+									{% include 'blog_item_index', article: art -%}
+								</div>
+								{% assign count = count | plus: 1 -%}
+								{% if count == article_related_list_limit -%}
+								{% break -%}
+								{% endif -%}
+								{% endif -%}
+								{% endfor -%}
+							</div>
+
+						</div>
+					</div>
+				</div>
+				{% endif -%}
+				{% endcapture -%}
+				{% if linklists[settings.aside_category_blog_menu] or count > 0 -%}
+				{% assign showSidebar = true -%}
+				{% endif -%}
+				<section class="right-content col-lg-9 col-12 mx-auto">
+					<article class="article-main">
+						<div class="article-details">
+							{% if article.image != null and settings.article_featured_image -%}
+							<img 
+									 class="img-fluid mx-auto mb-3 d-block mh-100 w-auto"
+									 src="{{ article.image.src}}"
+									 alt="{{ article.title }}">
+
+							{% endif -%}
+							<h1 class="article-title title_page">{{ article.title }}</h1>
+							<div class="media ">
+								<div class="media-body text-right">
+									<div class='mt-0 '>{{article.author}}</div>
+									<div class='art-info text-muted font-weight-light justify-content-end '>
+										{%assign thu = article.published_on | date:'%a' %}
+										<span>
+											{%include 'icon-calendar'-%}
+											{{ article.published_at | date:'%a %d/%m/%Y'}}  
+										</span>
+										{%include 'read-time' with content: article.content%} 
+									</div>
+
+								</div>
+							</div>
+							{% if article.content and article.content != '' and settings.article_toc_used-%}
+							<div class="toc-wrapper">
+								<div class="toc-title mb-2 open font-weight-bold">Nội dung bài viết 	{%include 'icon-arrow' -%}</div>
+								<div class="js-toc">
+
+								</div>
+							</div>
+							{% endif -%}
+
+
+							<div class="article-content js-toc-content">
+								<div class="rte"  id="ega-uti-editable-content" data-platform='haravan' data-id="{{article.id}}" data-blog-id={{blog.id}}>
+									{% if article.content and article.content != '' -%}
+									{% include 'shortcode' load: article.content %}
+									{% else -%}
+									<p class="ega-color--secondary">
+										Nội dung "{{article.title}}" đang được cập nhật
+									</p>
+									{% endif -%}
+								</div>
+							</div>
+						</div>
+						<div class="tag-share">
+							<div class="row">
+								{% if article.tags.size >0 -%}
+								<div class=" col-12 tags-list">
+									<div class="inline-block">
+										<i class="fa fa-tags"></i>
+										&nbsp;<b>Tags:</b>
+										{% for tag in article.tags -%}
+										<div class="tag_list d-inline-block">
+											<a href="/blogs/all/tagged/{{ tag | handle }}" title="{{tag}}" class="badge badge-secondary px-2 font-weight-normal ml-2 mt-2 ">{{ tag }}</a>
+
+										</div>
+										{% endfor -%}
+									</div>
+								</div>
+								{% endif -%}
+								{% if settings.article_social_enable -%}
+								<div class="col-12 share_social mt-3">
+									<div class="addthis_inline_share_toolbox share_add {%if  article.tags.size > 0%}tag{%else%}no-tag{%endif%}">
+										<script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-58589c2252fc2da4"></script>
+									</div>
+								</div>
+								{% endif -%}
+							</div>
+						</div>
+						<div class="section clearfix mt-3">
+							{% if blog.comments_enabled? %}
+							<div class="w-100 clearfix">
+								{% form "new_comment", article %} 
+								{% if form.posted_successfully? %}
+								{% if blog.moderated? %}
+								<p class="alert alert-success">
+									Bạn đã đăng bình luận thành công. Chúng tôi sẽ đăng bình luận của bạn sau khi được kiểm duyệt. 
+								</p>
+								{% else %} 
+								<p class="alert alert-success">
+									Bạn đã đăng bình luận thành công. Xin cảm ơn! 
+								</p>
+								{% endif %}
+								{%endif-%}
+
+								{% if form.errors.size > 0 %}
+								<div class="alert alert-danger">{{ form.errors | default_errors }}</div>
+								{% endif %}
+								<div class="form-coment clear-fix">
+									<div class="margin-top-0 margin-bottom-30 w-100">
+										<h5 class="title-form-coment">Viết bình luận của bạn</h5>
+									</div>
+									<div class="row">
+										<div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+											<fieldset class="form-group padding-0">
+												<input placeholder="Họ tên" type="text" class="form-control " value="{{ customer.name }}" id="full-name" name="comment[author]" Required>
+											</fieldset>
+										</div>
+										<div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+											<fieldset class="form-group padding-0">	
+												<input placeholder="Email" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,63}$" type="email" class="form-control " value="{{ customer.email }}" name="comment[email]" Required>
+											</fieldset>
+										</div>
+										<fieldset class="form-group padding-right-15 padding-left-15 col-lg-12 col-md-12 col-sm-12 col-xs-12">	
+											<textarea placeholder="Nội dung" class="form-control " id="comment" name="comment[body]" rows="6" Required>{{ form.body }}</textarea>
+										</fieldset>
+										<div class="col-12 text-center margin-bottom-fix margin-bottom-50-article clearfix padding-right-15 padding-left-15">
+											<button type="submit" class="btn btn-main--primary button_45 m-auto">Gửi bình luận</button>
+										</div>
+									</div>
+								</div> <!-- End form mail -->
+								{% endform %}
+
+								{% if article.comments_count > 0 %} 
+								<div id="article-comments">
+									<h5 class="margin-bottom-25 mt-3 mb-3">Bình luận</h5>
+									{% for comment in article.comments %}							
+									<div class="article-comment clearfix media py-3">
+										<figure class="article-comment-user-image mr-3">
+											<img loading="lazy" src="https://www.gravatar.com/avatar/{{ comment.email | remove: ' ' | strip_newlines | downcase | md5 }}?s=110&d=identicon" alt="binh-luan" class="block">
+										</figure>
+
+										<div class="article-comment-user-comment media-body">
+											<p class="user-name-comment mb-2"><strong>{{ comment.author }}</strong>
+												<a href="#article_comments" class="btn-link pull-xs-right hidden">Trả lời</a></p>
+											<small class="article-comment-date-bull">{{ comment.created_on | date:'dd/MM/yyyy' }}</small>
+											<p class="cm">{{ comment.content }}</p>
+										</div>
+									</div> 
+									{% endfor %}   
+								</div>
+								{% endif %}
+							</div>
+							{% endif %}
+						</div>
+					</article>
+				</section>
+				<div class="col-12">
+
+					{{related_article}}
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+<div id="fixed-toc" class="fixed-toc">
+	<button class="btn toc-toggle-btn" >
+		<i class="fa fa-list-ol" aria-hidden="true"></i>
+
+	</button>
+	<div class="fixed-toc-content">
+		<div class="toc-title mb-2 open font-weight-bold">Nội dung bài viết 	
+			<span class="toc-toggle-btn toc-toggle-btn ml-auto mb-2">{%include 'close-icon' -%}</span>
+		</div>
+	</div>
+</div>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tocbot/4.11.1/tocbot.css">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/tocbot/4.11.1/tocbot.min.js"></script>
+<script>
+	$(document).ready(()=>{
+		const tocHeadings = "{{settings.article_toc_heading}}" ;
+		function toSlug(string){
+			return string.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/-$/, '').replace(/^-/, '');
+		}
+		$('.js-toc-content :header').each(function(){
+			let heading = $(this)
+			heading.attr('id', toSlug(heading.text()))
+		})
+		tocbot.init({
+			// Where to render the table of contents.
+			tocSelector: '.js-toc',
+			// Where to grab the headings to build the table of contents.
+			contentSelector: '.js-toc-content',
+			// Which headings to grab inside of the contentSelector element.
+			headingSelector: tocHeadings,
+			// For headings inside relative or absolute positioned containers within content.
+			hasInnerContainers: true,
+			isCollapsedClass: 'is-collapsedd',
+			collapsibleClass: 'is-collapsibled',
+			collapseDepth : 8,
+			headingsOffset: 100,
+			scrollSmoothOffset: -100,
+			scrollSmooth : true })
+
+		$('.toc-title').click(function(){
+			$(this).toggleClass('open')
+			$('.js-toc').toggle()
+		})
+		$('.fixed-toc-content').append($('.js-toc').html())
+		$('.toc-list-item').length ? 	$('.toc-title').addClass('active') : $('.fixed-toc').remove()
+		$('.toc-toggle-btn').click(function(){
+			$(this).parents('.fixed-toc').toggleClass('open')
+		})
+		let observer = new IntersectionObserver((entries, observer) => { 
+			entries.forEach(entry => {
+
+				if(entry.isIntersecting){
+					$('.fixed-toc').removeClass('open').hide()
+				}else{
+					$('.fixed-toc').show()
+
+				}
+			});
+		}, {
+			threshold: 0,
+		});
+		document.querySelectorAll('.toc-wrapper').forEach(div => { observer.observe(div) });
+
+
+	})
+</script>
+
+

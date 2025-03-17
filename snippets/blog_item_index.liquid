@@ -1,0 +1,46 @@
+<div class="blogwp column " >
+	<a  class="image-blog card-img-top text-center position-relative 
+			   d-flex align-items-center justify-content-center
+			   aspect-ratio rounded overflow-hidden"
+	   href="{{ article.url }}" 
+	   title="{{ article.title }}"
+	   style=' --width: 433;
+			  --height: 231;'
+	   >
+		{% if article.image != null -%}
+		<img loading="lazy" 
+			 class="img-fluid m-auto mh-100 w-auto"
+			 src="{{ article.image.src}}"
+			 alt="{{ article.title }}">
+		{% else -%}
+		<img loading="lazy" class="img-fluid m-auto mh-100 w-auto"
+			 src="{{ 'article-no-image.jpg' | asset_url}}" alt="{{ article.title }}"
+			 title="{{ article.title }}"/>
+		{% endif -%}
+	</a>
+	<div class="content_blog clearfix card-body px-0 py-2">
+		<h3 class=''>
+			<a class='link' href="{{ article.url }}" title="{{ article.title }}">{{ article.title }}</a>
+		</h3>
+		<div class="media">
+			<div class="media-body">
+				<div class='art-info text-muted '>
+					<span>
+					{%include 'icon-calendar'-%}
+								{{ article.published_at | date:'%a %d/%m/%Y'}}	
+					</span>
+					{%include 'read-time' with content: article.content%}
+				</div>  
+			</div>
+		</div>
+		<p class="justify">
+			<span class="art-summary">
+					{%capture content%}{% include 'strip-shortcode' load: article.content %}{%endcapture%}
+				{{ content | strip_html | truncatewords: 26 }}
+			</span>
+			{% if article.content != null and article.content != "" -%}
+			<a class="button_custome_35 link" href="{{ article.url }}" title="Đọc tiếp">Đọc tiếp</a>
+			{% endif -%}
+		</p>
+	</div>
+</div>

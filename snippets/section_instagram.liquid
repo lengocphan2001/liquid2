@@ -1,0 +1,36 @@
+<section class="section_insta section">
+	<div class="container card border-0">
+		<h2 class="heading-bar__title">{{settings.insta_title-}}</h2>
+		<div class="insta_body hrz-scroll flex-nowrap" data-section="instagram">		
+			{%for i in (1..5)-%}
+			<div class="insta_item">
+				<div class="item_skeleton"></div>
+			</div>
+			{%endfor-%}
+			
+			{%capture instaSection-%} 
+				{%for i in (1..5)-%}
+				{%capture insta_show-%}insta_{{i-}}_show{%endcapture-%}
+				{%capture insta_img-%}insta_{{i-}}_img.jpg{%endcapture-%}
+				{%capture insta_url-%}insta_{{i-}}_url{%endcapture-%}
+				{%if settings[insta_show]-%} 
+					<a class="insta_item pos-relative embed-responsive embed-responsive-1by1" href="{{settings[insta_url]-}}">
+						<img loading="lazy"
+							 src="{{insta_img | asset_url-}}" 
+							 alt="{{insta_img-}}">
+						<div class="d-flex insta-icon-wrap">
+							<div class="insta-icon">
+								{%include 'instagram-icon'-%}
+							</div>
+						</div>
+					</a>
+				{%endif-%}
+				{%endfor-%}
+			{%endcapture-%}
+			
+			<script type="text/x-custom-template" data-template="instagram">
+				{{instaSection-}}
+			</script>
+		</div>
+	</div>
+</section>

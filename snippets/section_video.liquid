@@ -1,0 +1,28 @@
+<section class="section_video section position-relative">
+	<div class="container border-0">
+		{%assign video_id = settings.section_video_id-%}
+		{%capture videoUrl-%}https://www.youtube.com/watch?v={{video_id}}?width=800&height=450&autoplay=1{%endcapture-%}
+		
+		<div class="item video-item" data-src="{{videoUrl-}}">
+			<a class="d-block pos-relative embed-responsive embed-responsive-16by9"
+			   href="{{videoUrl-}}" data-rel="prettyPhoto[product-gallery]">
+				{%capture videoThumb %}https://img.youtube.com/vi/{{video_id}}/maxresdefault.jpg{%endcapture-%}
+				
+				<picture>
+					<source media="(max-width: 480px)" srcset="{{'section_video_bg.jpg' |img_url:'large' | asset_url-}}">
+					<source media="(max-width: 991px)" srcset="{{'section_video_bg.jpg' | aimg_url:'grande' | asset_url-}}">		
+					<img class="img-fluid object-contain" 
+					 src="{{'section_video_bg.jpg' | asset_url-}}" 
+					 width="1170"
+					 height="600"
+					 loading="lazy">
+				</picture>
+			</a>
+			<div class="video-play-button-wrap">
+				<div class="video-play-button"> 
+					{%include 'play-icon'-%}
+				</div>
+			</div>
+		</div>
+	</div>
+</section>

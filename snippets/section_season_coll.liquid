@@ -1,0 +1,43 @@
+{%assign season_style = settings.season_style-%}
+<section class="section_ss_collection section">
+	<div class="container card border-0">
+	<h2 class="heading-bar__title">{{settings.season_title-}}</h2>
+	<div class="ss_body">
+		<div class="row mx-0 hrz-scroll text-center flex-nowrap js-slider justify-content-around" >
+		
+			
+				{%for i in (1..8)-%}
+				{%capture season_coll_show-%}season_coll_{{i-}}_show{%endcapture-%}
+				{%capture season_coll_img-%}season_coll_{{i-}}_img.png{%endcapture-%}
+				{%capture season_coll-%}season_coll_{{i-}}_coll{%endcapture-%}
+				{%capture season_coll_width-%}season_coll_{{i-}}_width{%endcapture-%}
+				{%capture season_coll_height-%}season_coll_{{i-}}_height{%endcapture-%}
+				{%if settings[season_coll_show]-%}
+				{%assign seasonColl = settings[season_coll]-%}
+				<div class="ss_item {{season_style}}">
+					<a href="{{collections[seasonColl].url}}">
+						<div class="ss_img">
+							<picture>
+								<source media="(max-width: 991px)" srcset="{{season_coll_img | img_url:'medium' | asset_url-}}">
+								<img loading="lazy" 
+									 class="img-fluid m-auto object-contain mh-100 w-auto" 
+									 src="{{season_coll_img |img_url:'large' | asset_url-}}"
+									 width="{{settings[season_coll_width]-}}"
+									 height="{{settings[season_coll_height]-}}"
+									 alt="{{season_coll_img-}}"/>
+							</picture>
+						</div>
+						<div class="ss_info">
+							<div class="ss_name">{{collections[seasonColl].title-}}</div>
+							<span class="ss_number">{{collections[seasonColl].products_count}} sản phẩm</span>
+							<div class="ss_seemore">{%include 'icon-arrow', dir:"right"%}</div>
+						</div> 
+					</a>
+				</div>
+				{%endif-%}
+				{%endfor-%}
+			
+		</div>
+	</div>
+	</div>
+</section>

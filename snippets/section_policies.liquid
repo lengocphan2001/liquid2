@@ -1,0 +1,27 @@
+<div class="ega-policies">
+	<div class="container">
+		<div class="policies-body">
+		{%for i in (1..4)-%}
+			{%capture policies_use-%}policies_use_{{i-}}{% endcapture-%}
+			{%capture policies_icon-%}policies_icon_{{i-}}.png{% endcapture-%}
+			{%capture policies_title-%}policies_title_{{i-}}{% endcapture-%}
+			{%capture policies_text-%}policies_text_{{i-}}{% endcapture-%}
+			{%if settings[policies_use]-%} 
+			<div class="policies-item">
+				<div class="policies-image">
+					<img  src="{{policies_icon | asset_url-}}" alt="{{policies_icon-}}" 
+						 width="40"
+						 height="40"
+						 class="img-fluid"
+						 loading="lazy">
+				</div>
+				<div class="policies-info">
+					<h3 class="policies-title">{{settings[policies_title]-}}</h3>
+					<div class="policies-desc">{{settings[policies_text]-}}</div>
+				</div>
+			</div>
+			{%endif-%}
+		{%endfor-%}
+		</div>
+	</div>
+</div>

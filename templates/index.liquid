@@ -1,0 +1,11 @@
+<h1 class="d-none">{{shop.name}} - {{shop.description}}</h1>
+{%assign countSection = 0 -%}
+{%for i in (1..20)%}
+{%capture enable%}home_section_{{i}}{%endcapture%}
+{% if settings[enable] != 'none' %}
+{%assign countSection = countSection | plus: 1 -%}
+<section class="section awe-section-{{forloop.index}} section-{{settings[enable]}}">	
+	{% include settings[enable] %}
+</section>
+{%endif-%}
+{%endfor-%}

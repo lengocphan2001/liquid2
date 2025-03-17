@@ -1,0 +1,17 @@
+{% layout none %}
+
+{%- if search.results_count == 0 -%}
+Bạn chưa thêm sản phẩm yêu thích
+{%- else -%}
+<div class='row'>
+{% for product in search.results %}
+<div class="col-lg-15 col-md-4 col-sm-6 col-6 product-col">
+	<div class="item_product_main">
+		<div class="item">
+			{%- include 'product_grid_office' -%}
+		</div>
+	</div>
+</div>
+	{%- endfor -%}
+</div>
+	{%- endif -%}

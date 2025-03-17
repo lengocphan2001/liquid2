@@ -1,0 +1,12 @@
+<div class="product-trustbadge d-flex flex-wrap align-items-center">
+	<a href="{{settings.footer_trustbadge_url}}" 
+	   target="_blank"
+	   title="{{settings.footer_trustbadge_title | default: product.title}}">
+		<img class=" img-fluid" loading="lazy"
+			 src="{{'footer_trustbadge.png' | asset_url}}" 
+			 alt="{{settings.product_trustbadge_title | default: product.title}}"
+			 width="{{settings.footer_trustbadge_width}}"
+			 height="{{settings.footer_trustbadge_height}}"
+			 >
+	</a>
+</div>

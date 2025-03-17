@@ -1,0 +1,39 @@
+<div class='cart-upsell'>
+	<div class='cart-upsell__progress-wrapper'>
+		<div class='cart-upsell__progress'>
+			<div class='cart-upsell__progress-bar' 
+				 style='background-color: {{settings.cart_upsell_milestone_background | default: '#dae0e8'}}'>
+				<div class='cart-upsell__percent'
+					 style='width: 95%; background-color: {{settings.cart_upsell_milestone_color | default: '#50b83c'}};'>
+				</div>
+			</div>
+			<span style='color: #2EB346;'></span>
+		</div>
+	</div>
+
+	<div class='cart-upsell__promotion-wrapper'>
+		<div class='cart-upsell__promotion'
+			 style='border-width: 1px;
+					border-style: {{settings.cart_upsell_coupon_border_style | default: 'none'}};
+					border-color: {{settings.cart_upsell_coupon_border_color | default: '#FF8C00'}};
+					color: {{settings.cart_upsell_coupon_color | default: '#FF8C00'}};
+					background: {{settings.cart_upsell_coupon_background | default: '#FFEED9'}};'>
+			{% if settings.use_cart_upsell_coupon_icon -%}
+			<img src='{{"cart_upsell_coupon.png" | asset_url}}' alt='cart-upsell'/>
+			{% endif -%}
+			<strong>{{settings.cart_upsell_coupon}}</strong>
+			<button style='background-color: {{settings.cart_upsell_copy_background | default: '#FF8C00'}};
+						   color: {{settings.cart_upsell_copy_color | default: '#fff'}};
+						   border-radius: 99999px;
+						   border-color: rgb(255, 140, 0);'>
+				{{settings.cart_upsell_copy}}
+			</button>
+		</div>
+	</div>
+
+	<div class='cart-upsell__content' 
+		 style='--incomplete-color: {{settings.cart_upsell_incomplete_color}};
+				--incomplete-price: {{settings.cart_upsell_price_color | default: '#DF0000'}};
+				--complete-color: {{settings.cart_upsell_complete_color}}'>
+	</div>
+</div>

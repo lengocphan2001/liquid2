@@ -1,0 +1,98 @@
+{%capture reviewStyle -%}
+--reviewBg: {{settings.cus_review_bg-}};
+--starColor: {{settings.cus_star_color | default: '#000000'-}};
+{%endcapture-%}
+
+<section class="section_feedback section" style="{{reviewStyle-}}">
+	<div class="container">
+		<h2 class="heading-bar__title">{{settings.cus_review_title-}}</h2>
+		<div class="feedback_body">
+			<div class="row hrz-scroll text-center flex-nowrap js-slider">			
+				{%assign feedbackList = ""-%}
+				
+				{%for i in (1..10)-%}
+				{%capture cus_review_show-%}cus_review_{{i-}}_show{%endcapture-%}
+				{%capture cus_review_avatar_img-%}cus_review_avatar_{{i-}}.jpg{%endcapture-%}
+				{%capture cus_review_name-%}cus_review_{{i-}}_name{%endcapture-%}
+				{%capture cus_review_content-%}cus_review_{{i-}}_content{%endcapture-%}
+				{%capture cus_review_id-%}cus_review_{{i-}}_id{%endcapture-%}
+				{%capture cus_review_star-%}cus_review_{{i-}}_star{%endcapture-%}
+				
+				{%if settings[cus_review_show]-%} 				
+				{%assign cus_review_id = settings[cus_review_id]-%}				
+				{%if cus_review_id != ""-%}
+					{%if feedbackList == ""-%}
+						{%assign feedbackList = feedbackList | append:cus_review_id-%}
+					{%else-%}
+						{%assign feedbackList = feedbackList | append:"##" | append:cus_review_id-%}
+					{%endif-%}
+				{%endif-%}
+				
+				<div class="feedback_item">
+					<div class="feedback_item_wrap">
+						<div class="feedback_content">
+							<div class="feedback_info">
+								<div class="cusname">{{settings[cus_review_name]-}}</div>
+								<div class="star-vote">
+									{%assign reviewStar = settings[cus_review_star]-%}									
+									{%assign starNumber = reviewStar | floor-%}
+									
+									{%capture numStar-%}
+										{%for i in (1..starNumber)-%}
+											{%include 'star-icon'-%}
+										{%endfor-%}
+									
+										{%if starNumber < 5-%}
+											{%assign halfNum = 5 | minus:starNumber-%}
+											{%for i in (1..halfNum)-%} 
+												{%include 'star-half-icon'-%}
+											{%endfor-%}
+										{%endif-%}
+									{%endcapture-%}
+									
+									{{numStar-}}
+								</div>
+								<p>{{settings[cus_review_content]-}}</p>
+							</div>
+							<div class="feedback_avatar">
+								<img loading="lazy" width='100' height='100' src="{{cus_review_avatar_img | img_url:'compact' | asset_url -}}" alt="{{cus_review_avatar_img-}}"/>
+							</div>
+						</div>
+						<div class="feedback_footer feedback-{{cus_review_id}}"></div>
+					</div>
+				</div>
+				{%endif-%}
+				{%endfor-%}
+			</div>
+		</div>
+	</div>
+</section>
+
+<script>
+	function feedbackProduct() {
+		{%assign idArr = feedbackList | split:"##"-%}
+		{%capture idData-%}[{%for id in idArr-%}{%if forloop.last-%}{{id-}}{%else-%}{{id-}},{%endif-%}{%endfor-%}]{%endcapture-%}
+
+		let idList = {{idData-}};
+
+		if (idList && idList.length && Array.isArray(idList)){ 
+			//let filter =  '(id:product=' + idList.join(' || id:product=') + ')'
+			let filter = idList.map(el => `(id:product=${el})`).join('||');
+			$.ajax({
+				url: `/search?q=filter=id:${filter}&view=feedback`,
+				success: function(data) {
+					if (data && data.length) {						
+						$(data).map(function(i,v){
+							let id = v.id;
+							let content = $(v).html();
+							if(content != undefined){
+								$(`.feedback_footer.${id}`).html(content);
+							}
+						})
+
+					}
+				}
+			})
+		} 
+	}
+</script>

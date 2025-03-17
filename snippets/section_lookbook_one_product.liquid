@@ -1,0 +1,111 @@
+<section class="section_lookbook lookbook--oneproduct">
+	<div class="container">
+		<h2 class="heading-bar__title">{{settings.lookbook_oneproduct_title-}}</h2>
+		<div class="lookbooks-container row"> 
+			<div class="col-12 lookbooks-column">
+				<div class="lookbooks-banner">
+					<div class="lookbooks-banner__photo">
+						<div class="lookbook-image-wrap">
+							<img class="img-fluid m-auto object-contain mh-100 w-auto"
+									 loading="lazy" 
+									 width="520"
+									 height="675"
+									 src="{{ 'lookbook_oneproduct_img.jpg' | asset_url-}}" 
+									 alt="{{lookbook_oneproduct_image-}}">
+						</div>
+						{%assign dot_place = "top"-%}
+						{%for i in (1..3)-%}
+						{%capture dot_show-%}lookbook_oneproduct_dot{{i-}}_show{%endcapture-%}
+						{%capture dot_pos-%}lookbook_oneproduct_dot{{i-}}_pos{%endcapture-%}
+						{%capture dot_coor-%}lookbook_oneproduct_dot{{i-}}_coor{%endcapture-%}
+
+						{%if settings[dot_show]-%}
+
+						{%if settings[dot_pos]-%}
+						{%assign dot_place = settings[dot_pos]-%}
+						{%assign position = dot_place | split : ',' %}
+						{%endif-%}
+						{%if settings[dot_coor]-%}
+						{%assign coor = settings[dot_coor]-%}
+						{%assign coor = coor | split : ',' %}
+						{%endif-%}
+						<div class="lookbook-btn-wrap" style="--posx:{{coor | first}}; --posy:{{coor| last}};">
+							<button type="button" class="popover-dot dot-{{i}}" data-toggle="popover" 
+											data-placement="{{dot_place-}}" data-popover-content="#lookbook-oneproduct-{{i-}}">
+								{%include 'icon-lookbook'-%}
+							</button>
+						</div>
+						{%endif-%}
+						{%endfor-%}
+
+						{%if settings.lookbook_oneproduct_layer_show-%} 
+						<div class="lookbook-layer">
+							{%assign numRow = 16-%}
+							{%assign numCol = 16-%}
+							{%for i in (1..numRow)-%}
+							{%for j in (1..numCol)-%} 
+							<div class="layer-box" data-pos="{{i-}},{{j-}}" title="Tọa độ {{i-}},{{j-}}"></div>
+							{%endfor-%}
+							{%endfor-%}
+						</div>
+						{%endif-%}
+
+					</div>
+					<div class="loookbook-info text-center mt-3">
+						<h3>{{settings.lookbook_oneproduct_name-}}</h3>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div id="lookbooks-stick-oneproduct" class="hidden">
+			{%for i in (1..3)-%} 
+			{%capture dot_title-%}lookbook_oneproduct_dot{{i-}}_title{%endcapture-%}
+			{%capture dot_desc-%}lookbook_oneproduct_dot{{i-}}_desc{%endcapture-%}
+			{%capture dot_url-%}lookbook_oneproduct_dot{{i-}}_url{%endcapture-%}
+			<div id="lookbook-oneproduct-{{i-}}">
+				<div class="popover-content">
+					<a class="popover-product" href="{{settings[dot_url]-}}">
+							<h4 class="popover--title">{{settings[dot_title]-}}</h4>
+							<p class="popover--desc mb-0">{{settings[dot_desc]-}}</p>
+					</a> 
+				</div>
+			</div>
+			{%endfor-%}
+		</div>
+	</div>
+</section>
+
+<script>
+	var egaLookBookOneProduct = {
+		popover: function() {
+			$('.popover-dot[data-toggle="popover"]').popover({
+				html: true,
+				animation: true,
+				placement: function(popover, trigger) {
+					var placement = jQuery(trigger).attr('data-placement');
+					var dataClass = jQuery(trigger).attr('data-class');
+					jQuery(trigger).addClass('is-active');
+					jQuery(popover).addClass(dataClass);
+					return placement;
+				},
+				content: function() {
+					var elementId = $(this).attr("data-popover-content");
+					return $(elementId).html();
+				},
+			});
+			setTimeout(function() {
+				$('.lookbooks-1 .popover-dot:eq(0)').click();
+			}, 3000);
+			jQuery("body").on("click", '.popover-dot[data-toggle="popover"]', function(e) {
+				$('.popover-dot[data-toggle="popover"]').each(function() {
+					if (!$(this).is(e.target) && $(this).has(e.target).length === 0 && $('.popover').has(e.target).length === 0) {
+						$(this).popover('hide');
+					}
+				});
+			});
+			$('body').on('hidden.bs.popover', function(e) {
+				$(e.target).data('bs.popover').inState = { click: false, hover: false, focus: false };
+			});
+		}
+	};
+</script>

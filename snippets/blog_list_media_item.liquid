@@ -1,0 +1,32 @@
+<div class="blogwp clearfix media">
+	{% if article.image != null %}
+	<a  class="image-blog text-center mr-2 mr-md-3" href="{{ article.url }}" title="{{ article.title }}">
+		<img loading="lazy" class="img-fluid" src="{{ article.image.src | img_url: 'medium' }}"  alt="{{ article.title }}">
+	</a>
+	{%else%}
+	<a class="image-blog mr-2 mr-md-3 text-center" href="{{ article.url }}">
+		<img loading="lazy" class="img-fluid" src="{{ 'article-no-image.jpg' | asset_url}}" alt="{{ article.title }}" title="{{ article.title }}"/>
+	</a>
+	{% endif %}
+	<div class="content_blog clearfix media-body ">
+		<h3 class='mt-0 mb-1'>
+			<a class='link' href="{{ article.url }}" title="{{ article.title }}">{{ article.title }}</a>
+		</h3>
+		{%if template contains 'index'%}
+			<div class="media">
+			<div class="media-body d-flex flex--wrap align-items-center">				
+				<div class='text-muted mt-0'>
+							{{ article.published_at | date:'%a %d/%m/%Y'}}	 
+				</div>
+			</div>
+		</div>
+		<p class="justify lead d-none d-md-block "> 
+						{%capture content%}{% include 'strip-shortcode' load: article.content %}{%endcapture%}
+				{{ content | strip_html | truncatewords: 20 }}
+			{%if article.content != null and article.content != ""%}
+			<a class="button_custome_35 link" href="{{ article.url }}" title="Đọc tiếp">Đọc tiếp</a>
+			{%endif%}
+		</p>
+		{%endif -%}	
+	</div>
+</div>

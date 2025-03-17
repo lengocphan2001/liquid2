@@ -1,0 +1,348 @@
+{% layout none %}
+{%assign sold_out = true-%}
+{%if product.available-%}
+{%assign sold_out = false-%}
+{%assign awe-price = product.selected_or_first_available_variant.price-%}
+{%assign awe-variant = product.selected_or_first_available_variant.title-%}
+{%assign awe-compare-price = product.selected_or_first_available_variant.compare_at_price-%}
+{%else-%}
+{%assign awe-price = product.variants[0].price-%}
+{%assign awe-variant = product.variants[0].title-%}
+{%assign awe-compare-price = product.variants[0].compare_at_price-%}
+{%endif-%} 
+{%assign contact_item = false-%}
+{%if awe-price == 0-%}
+{%assign contact_item = true-%}
+{%endif-%}
+{%assign on_sale = false-%}
+{%if awe-compare-price > awe-price-%}
+{%assign on_sale = true-%}
+{%endif-%}
+{%assign variantCount = product.variants | size-%}
+{%assign on_var = false-%}
+{%if variantCount > 1-%}
+{%assign on_var = true-%}
+{%endif-%}
+
+
+{%if awe-compare-price > awe-price-%}
+{%capture discount-%} 
+{{awe-compare-price | minus:awe-price | times:100 | divided_by:awe-compare-price | ceil }}% 
+{%endcapture-%}
+{%assign pt = awe-compare-price | minus:awe-price | times:100 | divided_by:awe-compare-price-%}
+{%if pt > 99-%}
+{%capture discount-%}
+99%
+{%endcapture-%}
+{%endif-%}
+{%if pt < 1-%}
+{%capture discount-%}
+1%
+{%endcapture-%}
+{%endif-%}
+{%assign on_sale = true-%}
+{%endif-%}
+{%assign variantCount = product.variants | size-%}
+{%assign on_var = false-%}
+{%if variantCount > 1-%}
+{%assign on_var = true-%}
+{%endif-%}
+
+{%if awe-compare-price > awe-price-%}
+{%capture discount-%} 
+-{{awe-compare-price | minus:awe-price | times:100 | divided_by:awe-compare-price | ceil }}% 
+{%endcapture-%}
+{%assign pt = awe-compare-price | minus:awe-price | times:100 | divided_by:awe-compare-price-%}
+{%if pt > 99-%}
+{%capture discount-%}
+-99%
+{%endcapture-%}
+{%endif-%}
+{%if pt < 1-%}
+{%capture discount-%}
+1%
+{%endcapture-%}
+{%endif-%}
+{%assign on_sale = true-%}
+{%endif-%}
+{%assign variantCount = product.variants | size-%}
+{%assign on_var = false-%}
+{%if variantCount > 1-%}
+{%assign on_var = true-%}
+{%endif-%}
+{%assign featured_image_alt = product.featured_image.alt | default: product.title-%}
+
+{%assign boolVideo = false-%}
+{%if  settings.use_video_product-%}
+{%for tag in product.tags-%} 
+	{%if tag contains "video"-%}
+		{%assign boolVideo = true-%}
+		{%break-%}
+	{%endif-%}
+{%endfor-%}
+{%endif-%}
+
+
+{%assign vImgList = ""-%}
+{%for pdImg in product.images-%}
+	{%if pdImg.src contains "color-"-%}
+		{%if vImgList == ""-%} 
+			{%assign vImgList = pdImg.src-%}
+		{%else-%}
+			{%assign vImgList = vImgList | append: '####' | append: pdImg.src-%}
+		{%endif-%}
+	{%endif-%}
+{%endfor-%}	
+
+{%assign vImgArr = vImgList | split:"####"-%}
+
+{% assign promotion_divider = settings.product_promotion_heading | handleize -%}
+{% assign promotion = '' -%}
+{% assign promotion_content = '' -%}
+
+{% assign product_content_arr = product.description | split: '<h6>' -%}
+
+{% for content_item in product_content_arr -%}
+{% if forloop.index > 0 -%}
+{% if content_item contains '</h6>' -%}
+{% assign content_item_title = content_item | split: '</h6>' | first -%}
+{% assign content_item_title_handleize = content_item_title | handleize -%}
+
+{% if content_item_title_handleize contains promotion_divider -%}
+{% assign promotion = content_item | split: '</h6>' | last -%}
+{% assign promotion_content = '<h6>' | append: content_item_title | append: '</h6>' | append: promotion -%}
+{% endif -%}
+
+{% endif -%}
+{% endif -%}
+{% endfor -%}
+<div class='col-6 col-sm-3 col-md-3 col-lg-3 product-col'>
+	<div class='item_product_main'>
+<form action="/cart/add" method="post" class="variants product-action" data-id="product-actions-{{ product.id }}" enctype="multipart/form-data">
+	<div class="product-thumbnail pos-relative">
+		<a class="image_thumb pos-relative embed-responsive embed-responsive-3by4" href="{{ product.url }}" title="{{ product.title }}">
+			{%include 'product-frame'-%}
+			<img loading="lazy" 
+				 class='img-fetured'
+				 width="480"
+				 height="480"
+				 style="--image-scale: {{image_scale}};{{img_position}}"
+				 src="{{ product.featured_image.src | img_url:'large' }}" alt="{{ product.title -}}">
+			{%if product.images.size > 1 and settings.use_hover_change_image-%}
+			<img loading="lazy"
+				 class='product-thumbnail__img product-thumbnail__img--secondary'
+				 width="480"
+				 height="480"
+				 style="--image-scale: {{image_scale}};{{img_position}}"
+				 src="{{ product.images[1].src | img_url:'large' }}" alt="{{ product.title -}}">
+			{%endif-%}
+			
+		</a>
+		{%if boolVideo and settings.use_video_play_button_pditem-%} 
+				<img src="{{ "icon-button-play.png" | asset_url -}}" 
+					 loading="lazy"
+					 class="video-icon"
+					 alt="video-play-button"/>
+			{%endif-%}
+		{%unless contact_item-%}{%if on_sale-%}
+		<div class="label_product ">
+			<div class="label_wrapper">{{discount -}}
+			</div>
+		</div>
+		{%endif-%}{%endunless-%}
+		<input type="hidden" name="id" value="{{ product.variants[0].id }}" />
+		<div class="action-bar">
+			<button class="action-child btn add_to_cart active" {%if sold_out or contact_item-%}disabled{%endif-%}>
+				<i class="fas fa-shopping-cart"></i>
+				<span class="action-name">
+					{%if sold_out-%}
+						Hết hàng
+					{%elsif contact_item-%}
+						Liên hệ
+					{%else-%}
+						Thêm vào giỏ
+					{%endif-%}
+				</span>
+			</button>
+			{%if settings.quickview_enable-%}
+			<a href="{{ product.url }}" data-handle="{{ product.handle }}" class="action-child xem_nhanh btn-circle btn-views btn_view btn right-to quick-view">
+				<i class="fas fa-eye"></i>
+				<span class="action-name">Xem nhanh</span>
+			</a>
+			{%endif-%}
+		</div>
+	</div>
+	<div class="product-info">
+		{%if settings.use_pd_vendor-%} 
+		<span class="product-vendor">{{product.vendor}}</span>
+		{%endif-%}
+		<div class='d-flex justify-content-between'>
+		<span class="product-name">
+			<a class="link" href="{{ product.url }}" title="{{ product.title }}">{{ product.title }}</a>
+		</span>
+		<a href="#" class="onAppWishList_remove" data-id="{{product.id}}" style='margin-left: 5px; color: #E91E63;'
+			 type="button" class="rmv-wish">
+      <i class="fas fa-heart"></i>
+    </a>
+		</div>
+			{%if settings.use_reviews and settings.use_reviews != '' -%}
+	{%include 'star-rating-badge'%}
+{%endif-%}
+		<div class="product-item-cta position-relative" >
+		<div class="price-box">
+			{%if contact_item-%}
+			<span class="price-contact">
+			Liên hệ
+			</span>
+			{%else-%}
+			{%if on_sale-%}
+			<span class="price">{{  awe-price | money }}</span>
+			{%if awe-compare-price > awe-price-%}
+			<span class="compare-price">{{ awe-compare-price | money }}</span>
+			{%unless contact_item-%}{%if on_sale-%}
+		<div class="label_product d-lg-none d-md-none d-xl-none d-inline-block">
+			<div class="label_wrapper">{{discount -}}
+			</div>
+		</div>
+		{%endif-%}{%endunless-%}
+			{%endif-%}			
+			{%else-%}
+			<span class="price">{{  awe-price | money }}</span>
+			{%endif-%}
+			{%endif-%}
+			
+				
+		</div>	
+		</div>
+		
+		<div class="item-color-chosen">
+			{%assign boolColor = false-%}
+			{%for option in product.options-%}
+				{%assign downcased_option = option | downcase-%}
+				{%if downcased_option contains 'color' or downcased_option contains 'colour'  or downcased_option contains 'màu'-%}
+					{%assign boolColor = true-%}
+					{%assign opIndex = forloop.index0-%}
+					{%break-%}
+				{%endif-%}
+			{%endfor-%}
+			
+			{%if boolColor-%} 
+				{%assign colorList = ''-%}
+			{%assign countColor = 0-%}
+				{%for variant in product.variants-%}
+					{%assign colorName = variant.options[opIndex]-%}
+					{%unless colorList contains colorName-%}
+					{%assign colorList = colorList | join: ','-%}
+					{%assign colorList = colorList | append: ',' | append: colorName-%} 
+					{%assign colorList = colorList | split: ','-%}			
+			
+					{%assign co = false-%}
+					{% assign image1 = '' -%}
+
+					{%for i in (1..10)-%}
+						{%assign valuecheck =  colorName | downcase | handle-%}
+						{%capture label-%}color_{{i}}{%endcapture-%}                            
+						{%assign title = settings[label]| downcase | handle-%}
+						{% capture image -%}color_{{i}}.png{% endcapture -%}
+						{%capture color-%}color_{{i}}_c{%endcapture-%}
+						{%if valuecheck == title -%}             
+							{%assign colorSetting = settings[color]-%}
+							{% assign image1 = image -%}
+							{%assign co = true-%}
+								{%assign countColor = countColor | plus:1-%}
+							{%break-%}
+						{%endif-%}
+					{%endfor-%}
+					
+					{%assign vName = valuecheck | prepend:"color-"-%}
+
+					{%assign boolVImg = false-%}
+					{%assign vImgSrc = ""-%}
+					{%if settings.variant_color_type == 'image' -%}
+			
+					{%assign vImgSrc = image1 | asset_url-%}
+					{%assign boolVImg = true-%}
+
+					{%endif-%}
+					{%if settings.use_img_from == "product"-%}
+					{%for imgSrc in vImgArr-%} 
+					{%if imgSrc contains vName-%}
+					{%assign boolVImg = true-%}
+					{%assign vImgSrc = imgSrc-%}
+					{%endif-%}
+					{%endfor-%}
+					{%endif%}
+					{%if settings.use_img_from == "variant"-%}
+						{%if variant.image-%} 
+								{%assign vImgSrc = variant.image.src-%}
+								{%assign boolVImg = true-%}
+						{%endif%}	
+					{%endif%}
+					{%assign colorLimit = settings.color_view_limit-%}
+					{%if co == true and countColor <= colorLimit-%}
+						{%if boolVImg-%}
+
+						<div data-variant-id="{{variant.id-}}" class="color-dot {%if countColor == 1-%}selected{%endif-%}" style="background: url({{vImgSrc}}) no-repeat center center; background-size: cover">
+							<span class="color-name">{{colorName-}}</span>
+						</div>
+						{%else-%}
+						<div data-variant-id="{{variant.id-}}" class="color-dot {%if countColor == 1-%}selected{%endif-%}" style="background-color: {{colorSetting}}">
+							<span class="color-name">{{colorName-}}</span>
+						</div>
+						{%endif-%}
+					{%endif-%}		
+					{%endunless-%}
+			{%endfor-%}
+			
+			{%if countColor > colorLimit-%} 
+			{%if settings.color_view_limit == "detail"-%} 
+			<a href="{{ product.url }}" class="color-more">
+				+{{countColor | minus:colorLimit-}}
+				<span class="action-name">Xem thêm {{countColor | minus:colorLimit}} màu khác</span>
+			</a>
+			{%else-%}
+			<a href="{{ product.url }}" data-handle="{{ product.handle }}" class="color-more quick-view">
+				+{{countColor | minus:colorLimit-}}
+				<span class="action-name">Xem thêm {{countColor | minus:colorLimit}} màu khác</span>
+			</a>
+			{%endif-%}
+			{%endif-%}			
+			{%endif-%}	
+		</div>
+		
+		{%include 'product-tag-promo'-%}
+
+		{%if template == "index"-%} 
+			{%unless settings.flashsale_show_quantity-%}  
+				{%include 'product-badge'-%}
+			{%endunless-%}
+		{%else-%}
+			{%include 'product-badge'-%}
+		{%endif-%}	
+		
+		{% if settings.use_product_promotion-%}
+		<div class='product-promotion hidden' id='ega-salebox-{{product.id}}'>
+			<span class='product-promotion__heading rounded-sm d-inline-flex align-items-center'>
+				<img alt="{{settings.product_promotion_heading}}" src='{{"icon-product-promotion.png" | asset_url}}' width='16' height='16' class='mr-2'/>
+				{{settings.product_promotion_heading}}
+			</span>
+			{%if promotion == ''-%} 
+			<ul class="promotion-box">
+				{%for i in (1..5)-%} 
+				{%capture promotion_content-%}product_promotion_{{i-}}_content{%endcapture-%}
+				{%assign promotion_content = settings[promotion_content]-%}
+
+				{%if promotion_content != _blank-%} 
+				<li>{{promotion_content-}}</li>
+				{%endif-%}
+				{%endfor-%}
+			</ul>
+			{%else-%}
+			{{promotion}}
+			{%endif-%}
+		</div>
+		{% endif -%}
+	</div>
+</form>
+</div>
+</div>

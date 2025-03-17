@@ -1,0 +1,136 @@
+{% assign related_tag = '' -%}
+{% assign tag_sanphamlienquan = settings.tag_sanphamlienquan | append: '_' -%}
+{% for tag in product.tags %}
+{% if tag contains tag_sanphamlienquan -%}
+{% assign related_tag = tag -%}
+{% break %}
+{% endif -%}
+{% endfor%}
+
+{% capture related_products_by_collection %}
+{% assign check11 = product.url %}
+{% assign productRelate = product.collections.first.handle %}
+{% assign productRelateCheck = product.collections.size %}
+{% assign productRelateCheck2 = product.collections.first.products_count %}
+{% if productRelateCheck > 0 and productRelateCheck2 > 1  %}
+{% assign count = 0 -%}
+{% assign limit = settings.limit_sanphamlienquan%}
+{% for product in collections[productRelate]products %}
+{% unless check11 == product.url -%}
+{% assign count = count | plus: 1 -%}
+<div class="item product-col{%if productRelateCheck2 > settings.limit_sanphamlienquan %} col-7 col-md-5 col-lg-15{%else %} col-7 col-md-5 col-lg-15{%endif%}">
+	<div class="item_product_main">
+		{% include 'product_grid_office' %}
+	</div>
+</div>
+{%if count >= limit -%}{%break-%}{%endif-%}
+{%endunless%}
+{% endfor %}
+
+{%else%}
+<div class='col-12'>
+	{{ settings.sanphamlienquan_empty_message }}
+</div>
+{% endif %}
+{% endcapture %}
+
+<div class='related-product border-0'>
+	<div class="title_module heading-bar d-flex justify-content-between align-items-center">
+		<h2 class="bf_flower heading-bar__title">
+			<a class="link" href="/collections/{{ productRelate | handleize }}" title="{{ settings.sanphamlienquan_title }}">{{ settings.sanphamlienquan_title }}</a>
+		</h2>
+	</div>
+	{%if settings.type_sanphamlienquan == 'tag' -%}
+	{%if related_tag != '' -%}		
+	<div id="sidebarproduct">
+		<div class="section_prd_feature section products product_related slick-product slickrelated row"></div>
+	</div>
+	{%else-%}
+
+	{% if settings.use_collection_alternative %}
+	<div id="sidebarproduct">
+		<div class="section_prd_feature section products product_related slick-product slickrelated row">
+			{{ related_products_by_collection }}
+		</div>
+	</div>
+	{% else %}
+	<div class='col-12'>
+		{{ settings.sanphamlienquan_empty_message }}
+	</div>
+	{% endif %}
+
+	{%endif-%}
+	{%else-%}
+	<div id="sidebarproduct">
+		<div class="section_prd_feature section products product_related slick-product slickrelated row m-0">
+			{{ related_products_by_collection }}
+		</div>
+	</div>
+	{%endif-%}
+</div>
+
+<script>
+	function relatedProductSlide(){
+		if(window.matchMedia('(min-width: 768px)').matches && $('.slickrelated .item').length >= 6){
+			$('.slickrelated').slick({
+				autoplay: false,
+				autoplaySpeed: 6000,
+				dots: false,
+				arrows: true,
+				infinite: false,
+				speed: 300,
+				slidesToShow: 5,
+				slidesToScroll: 5,
+				centerMode: false,
+				responsive: [
+					{
+						breakpoint: 1200,
+						settings: {
+							slidesToShow: 5,
+							slidesToScroll: 5
+						}
+					},
+					{
+						breakpoint: 991,
+						settings: {
+							slidesToShow: 4,
+							slidesToScroll: 1
+						}
+					},
+					{
+						breakpoint: 767,
+						settings: {
+							slidesToShow: 2,
+							slidesToScroll: 2
+						}
+					}
+				]
+			});
+		}
+	}
+	function initProductsRelated() {
+		const tag = "{{related_tag}}"
+		const relatedType = "{{settings.type_sanphamlienquan}}"
+		const id= "{{product.id}}"
+		if(relatedType === 'tag' && tag !== '') {
+			$.get(`/search?q=filter=(id:product<>${id})&&(tag:product=${tag})&view=related`).then(response => {
+				if(response && response.length) {
+					$('.slickrelated').append(response)
+					relatedProductSlide()
+					productsCallback()
+					$('.related-product .heading-bar__title a').attr('href', `/search?q=filter=(tag:product=${tag})`)
+				} else {
+					{% if settings.use_collection_alternative %}
+					$('.slickrelated').append(`{{related_products_by_collection}}`)
+					relatedProductSlide()
+					{% else %}
+					$('.slickrelated').append(`<div class='col-12'>{{ settings.sanphamlienquan_empty_message }}</div>`)
+					{% endif %}
+				}
+			})
+		} else {
+			relatedProductSlide()
+		}
+	}
+	initProductsRelated()
+</script>

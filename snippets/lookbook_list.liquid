@@ -1,0 +1,77 @@
+{%assign pdIdList = ""-%}
+
+{%for i in (1..3)-%}
+{%capture lookbook_show-%}lookbook_{{i-}}_show{%endcapture-%}
+{%capture lookbook_image-%}lookbook_{{i-}}_image.jpg{%endcapture-%}
+{%capture lookbook_name-%}lookbook_{{i-}}_setname{%endcapture-%}
+{%capture lookbook_url-%}lookbook_{{i-}}_seturl{%endcapture-%}
+
+{%if settings[lookbook_show]-%} 
+<div class="col-xl-4 col-md-6 col-12 lookbooks-column">
+	<div class="lookbooks-banner lookbooks-{{i}}">
+		<div class="lookbooks-banner__photo">
+			<div class="lookbook-image-wrap">
+				<img class="img-fluid m-auto object-contain mh-100 w-auto"
+					 loading="lazy" 
+					 width="520"
+					 height="675"
+					 src="{{lookbook_image | asset_url-}}" 
+					 alt="{{lookbook_image-}}">
+			</div>
+			{%assign dot_place = "top"-%}
+			{%for j in (1..3)-%}
+			{%capture dot_show-%}lookbook_{{i-}}_dot{{j-}}_show{%endcapture-%}
+			{%capture dot_pos-%}lookbook_{{i-}}_dot{{j-}}_pos{%endcapture-%}
+			{%capture dot_pdid-%}lookbook_{{i-}}_dot{{j-}}_id{%endcapture-%}
+			{%capture dot_coor-%}lookbook_{{i-}}_dot{{j-}}_coor{%endcapture-%}
+
+			{%if settings[dot_show]-%} 
+
+			{%assign dotPdId = settings[dot_pdid]-%}
+			{%if dotPdId and dotPdId != ""-%}
+			{%if pdIdList == ""-%}
+			{%assign pdIdList = pdIdList | append:dotPdId-%}
+			{%else-%}
+			{%assign pdIdList = pdIdList | append:"##" | append:dotPdId-%}
+			{%endif-%}
+			{%endif-%}
+
+			{%if settings[dot_pos]-%}
+			{%assign dot_place = settings[dot_pos]-%}
+			{%assign position = dot_place | split : ',' %}
+			{%endif-%}
+			{%if settings[dot_coor]-%}
+			{%assign coor = settings[dot_coor]-%}
+			{%assign coor = coor | split : ',' %}
+			{%endif-%}
+			<button type="button" class="popover-dot dot-{{j}}" data-toggle="popover" 
+					data-placement="{{dot_place-}}" data-popover-content="#lookbook-{{dotPdId-}}"
+					style="--posx:{{coor | first}}; --posy:{{coor| last}}; "
+					
+					>
+				{%include 'icon-lookbook'-%}
+			</button>
+			{%endif-%}
+			{%endfor-%}
+
+			{%if settings.lookbook_layer_show-%} 
+			<div class="lookbook-layer">
+				{%assign numRow = 16-%}
+				{%assign numCol = 16-%}
+				{%for i in (1..numRow)-%}
+				{%for j in (1..numCol)-%} 
+				<div class="layer-box" data-pos="{{i-}},{{j-}}" title="Tọa độ {{i-}},{{j-}}"></div>
+				{%endfor-%}
+				{%endfor-%}
+			</div>
+			{%endif-%}
+
+		</div>
+		<div class="loookbook-info text-center mt-3">
+			<h3>{{settings[lookbook_name]-}}</h3>
+			<a href="{{settings[lookbook_url]-}}">Xem chi tiết</a>
+		</div>
+	</div>
+</div>
+{%endif-%}
+{%endfor-%}

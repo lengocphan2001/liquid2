@@ -1,0 +1,15 @@
+{%layout none%}
+
+{%if search.results.size > 0-%}
+	{%for product in search.results-%}
+	<div id="feedback-{{product.id-}}">
+		<a href="{{product.url-}}" class="feedback_product link" title="{{product.title-}}">
+			<img loading="lazy" 
+				 class="img-fluid m-auto object-contain mh-100 w-auto" 
+				 src="{{product.featured_image.src | img_url:'medium'-}}"
+				 alt="{{product.title-}}"/>
+			<div class="pd-name text-left">{{product.title-}}</div> 
+		</a>
+	</div>
+	{%endfor-%}
+{%endif-%}

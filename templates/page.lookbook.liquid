@@ -1,0 +1,289 @@
+{{ 'lookbook-popover.js'  | asset_url | script_tag }}
+<section class="page section text-center">
+	{%if page.content contains "####"-%}
+	{%assign imgContent = page.content | split:"####" | first-%}
+	{%assign srcPart = imgContent | split:'src="' | last-%}
+	<img class="img-fluid m-auto object-contain mh-100 w-auto" loading="lazy" width="1920"
+		 height="250"
+		 src="{{srcPart | split:'"' | first-}}" 
+		 alt=""/>
+	{%endif-%}
+	<div class="container card py-2">
+		<div class="lookbook-intro">
+			<h1 class="lookbook-intro-title">{{page_title-}}</h1>
+			<div class="content-page">
+				{%if page.content and page.content != null and page.content != '' -%}
+					{%if page.content contains "####"-%}
+						{{page.content | split:"####" | last-}}
+					{%else-%}
+					{{page.content-}}
+					{%endif-%}
+				{%else-%}
+				<p class="ega-color--secondary">
+					Nội dung "{{page.title}}" đang được cập nhật
+				</p>
+				{%endif -%}
+			</div>
+		</div>
+		<div class="lookbook-main">
+			<div class="lookbook-main-img section_lookbook">
+				<div class="lookbooks-container">
+					{%assign mainIdList = ""-%}
+					{%for i in (1..3)-%}
+					{%capture lookbook_show-%}lookbook_{{i-}}_show{%endcapture-%}
+					{%capture lookbook_image-%}lookbook_{{i-}}_image.jpg{%endcapture-%}
+					{%capture lookbook_name-%}lookbook_{{i-}}_setname{%endcapture-%}
+					{%capture lookbook_url-%}lookbook_{{i-}}_seturl{%endcapture-%}
+					{%assign lookbookUrl = settings[lookbook_url] | split:"/" | last-%}		
+																																				 
+					{%if lookbookUrl == page.handle-%} 																																				
+					{%if settings[lookbook_show]-%} 
+					{%assign lookbookName = settings[lookbook_name]-%}
+					<div class="lookbooks-column">
+						<div class="lookbooks-banner lookbooks-{{i}}">
+							<div class="lookbooks-banner__photo">
+								<div class="lookbook-image-wrap">
+									<img class="img-fluid m-auto object-contain mh-100 w-auto"
+										 loading="lazy" 
+										 width="520"
+										 height="675"
+										 src="{{lookbook_image | asset_url-}}" 
+										 alt="{{lookbook_image-}}">
+								</div>
+								{%assign dot_place = "top"-%}
+								{%for j in (1..3)-%}
+								{%capture dot_show-%}lookbook_{{i-}}_dot{{j-}}_show{%endcapture-%}
+								{%capture dot_pos-%}lookbook_{{i-}}_dot{{j-}}_pos{%endcapture-%}
+								{%capture dot_pdid-%}lookbook_{{i-}}_dot{{j-}}_id{%endcapture-%}
+								{%capture dot_coor-%}lookbook_{{i-}}_dot{{j-}}_coor{%endcapture-%}
+								{%if settings[dot_show]-%} 
+
+								{%assign dotPdId = settings[dot_pdid]-%}
+								
+								{%if dotPdId and dotPdId != ""-%}
+									{%if mainIdList == ""-%}
+										{%assign mainIdList = mainIdList | append:dotPdId-%}
+									{%else-%}
+										{%assign mainIdList = mainIdList | append:"##" | append:dotPdId-%}
+									{%endif-%}
+								{%endif-%}
+
+								{%if settings[dot_pos]-%}
+								{%assign dot_place = settings[dot_pos]-%}
+								{%assign position = dot_place | split : ',' %}
+								{%endif-%}
+								{%if settings[dot_coor]-%}
+								{%assign coor = settings[dot_coor]-%}
+								{%assign coor = coor | split : ',' %}
+								{%endif-%}
+								<button type="button" class="popover-dot dot-{{j}}" data-toggle="popover" 
+										data-placement="{{dot_place-}}" data-popover-content="#lookbook-{{dotPdId-}}"
+										style="--posx:{{coor | first}}; --posy:{{coor| last}}; ">
+									{%include 'icon-lookbook'-%}
+								</button>
+								{%endif-%}
+								{%endfor-%}
+
+								{%if settings.lookbook_layer_show-%} 
+								<div class="lookbook-layer">
+									{%assign numRow = 16-%}
+									{%assign numCol = 16-%}
+									{%for i in (1..numRow)-%}
+									{%for j in (1..numCol)-%} 
+									<div class="layer-box" data-pos="{{i-}},{{j-}}" title="Tọa độ {{i-}},{{j-}}"></div>
+									{%endfor-%}
+									{%endfor-%}
+								</div>
+								{%endif-%}
+
+							</div>
+							
+						</div>
+					</div>
+					{%endif-%}
+					{%endif-%}
+					{%endfor-%}
+				</div>
+			</div>
+			<div class="lookbook-select">
+				<div class="groupbuy-body">
+					<h3 class="setbuy-title">{{lookbookName-}}</h3>
+					<div class="set-list"></div>
+					<div class="set-buyall">
+						<button class="btn">Thêm vào giỏ | <span class="set-total"></span></button>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="lookbook-related section_lookbook">
+			<h2 class="heading-bar__title">Set đồ liên quan</h2>
+			<div class="lookbooks-container row">
+				{%include 'lookbook_list'-%}
+			</div>
+		<div id="lookbooks-stick-product" class="hidden"></div>
+		</div>
+	</div>
+</section>
+
+<script>
+	var egaLookBook = {
+		slider: function(){
+			$('.section_lookbook .lookbooks-container').slick({
+				autoplay: false,
+				autoplaySpeed: 6000,
+				dots: false,
+				arrows: true,
+				infinite: false,
+				speed: 300,
+				slidesToShow: 5,
+				slidesToScroll: 5,
+				centerMode: false,
+				responsive: [
+					{
+
+						breakpoint: 991,
+						settings: {
+							slidesToShow: 2,
+							slidesToScroll: 2
+						}
+					},
+					{
+						breakpoint: 767,
+						settings: {
+							slidesToShow: 1,
+							slidesToScroll: 1
+						}
+					}
+				]
+			});
+		},
+		popover: function() {
+			$('.popover-dot[data-toggle="popover"]').popover({
+				html: true,
+				animation: true,
+				placement: function(popover, trigger) {
+					var placement = jQuery(trigger).attr('data-placement');
+					var dataClass = jQuery(trigger).attr('data-class');
+					jQuery(trigger).addClass('is-active');
+					jQuery(popover).addClass(dataClass);
+					return placement;
+				},
+				content: function() {
+					var elementId = $(this).attr("data-popover-content");
+					return $(elementId).html();
+				},
+			});
+			setTimeout(function() {
+				$('.lookbooks-1 .popover-dot:eq(0)').click();
+			}, 3000);
+			jQuery("body").on("click", '.popover-dot[data-toggle="popover"]', function(e) {
+				$('.popover-dot[data-toggle="popover"]').each(function() {
+					if (!$(this).is(e.target) && $(this).has(e.target).length === 0 && $('.popover').has(e.target).length === 0) {
+						$(this).popover('hide');
+					}
+				});
+			});
+			$('body').on('hidden.bs.popover', function(e) {
+				$(e.target).data('bs.popover').inState = { click: false, hover: false, focus: false };
+			});
+		},
+		getLookBook: function(element) {
+			try {
+				{%assign idArr = pdIdList | split:"##"-%}
+				{%capture idData-%}[{%for id in idArr-%}{%if forloop.last-%}{{id-}}{%else-%}{{id-}},{%endif-%}{%endfor-%}]{%endcapture-%}			
+				var idList = {{idData-}};
+				if (idList && idList.length && Array.isArray(idList)){ 
+					
+						let filter = idList.map(el => `(id:product=${el})`).join('||');
+					$.ajax({
+						url: `/search?q=filter=${filter}&view=lookbook`,
+						success: function(data) {
+							if (data && data.length) {
+								let wrapper = $(element);
+								wrapper.html(data)
+							} else {
+								$(element).remove()
+							}
+						}
+					})
+				} else {
+					$(element).remove()
+				}
+			} catch (e) {
+				console.log(e)
+				$(element).remove()
+			}
+		},
+		getTotalPrice: function(){
+			let totalPrice = 0;
+			$(".set-variant-select select").each(function() {
+				totalPrice += $(this).find("option:selected").data().price;
+			})
+			$(".set-buyall .set-total").text(Haravan.formatMoney(totalPrice, '{{store.money_format}}'));
+		},
+		getMainProduct: function(element) {
+			try {
+				{%assign idArr = mainIdList | split:"##"-%}
+				{%capture idData-%}[{%for id in idArr-%}{%if forloop.last-%}{{id-}}{%else-%}{{id-}},{%endif-%}{%endfor-%}]{%endcapture-%}			
+				var idList = {{idData-}};
+				if (idList && idList.length && Array.isArray(idList)){ 
+					let filter = idList.map(el => `(id:product=${el})`).join('||');
+					$.ajax({
+						url: `/search?q=filter=${filter}&view=page_lookbook`,
+						success: function(data) {
+							if (data && data.length) {
+								let wrapper = $(element);
+								wrapper.html(data);
+								
+								egaLookBook.getTotalPrice();
+								
+								$(".set-variant-select select").on("change",function(){
+									egaLookBook.getTotalPrice();
+								})
+								
+								$(".set-buyall button").click(function(){
+									var productIdList = new Array();
+									$(".set-variant-select select").each(function() {
+										let variantId = $(this).val();
+										if(!productIdList.includes(variantId)){
+										   productIdList.push(variantId);
+										}
+									})
+
+									productIdList.map(function(id) {
+										$.ajax({
+											type: 'POST',
+											url: '/cart/add.js',
+											async: false,
+											data: `id=${id}&quantity=1`,
+											dataType: 'json',
+											beforeSend: function() {},
+											success: function() {
+												location.href = "/cart"
+											},
+											cache: false
+										});
+									})
+								})
+							} else {
+								$(element).remove()
+							}
+						}
+					})
+				} else {
+					$(element).remove()
+				}
+			} catch (e) {
+				console.log(e)
+				$(element).remove()
+			}
+		}
+	};
+	
+	if(window.matchMedia('(max-width: 991px)').matches){
+		egaLookBook.slider();
+	}
+	egaLookBook.getMainProduct(".set-list");
+	egaLookBook.getLookBook('#lookbooks-stick-product');
+	egaLookBook.popover();
+</script>

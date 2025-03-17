@@ -1,0 +1,28 @@
+{%layout none%}
+
+{%if  search.results_count > 0 -%}
+	{%for product in search.results-%}
+		<div class="set-item">
+			<div class="item-no">
+				<span>{{forloop.index-}}</span>
+			</div>
+			<div class="item-img">
+				<img src="{{product.featured_image.src | img_url:'small'-}}" alt=""/>
+			</div>
+			<div class="item-info">
+				<h4>{{product.title-}}</h4>
+				<span>{{product.price | money-}}</span>
+				<div class="set-variant-wrap">
+					<div class="set-variant-select">
+						<select>
+							{%for variant in product.variants-%}
+							<option {% if variant == product.selected_or_first_available_variant %} selected="selected" {% endif %} value="{{ variant.id }}" data-price="{{variant.price-}}">{{ variant.title }} - {{ variant.price | money }}</option>
+							{%endfor-%}
+						</select>
+						<i class="fas fa-angle-down"></i>
+					</div>
+				</div>
+			</div>
+		</div>
+	{%endfor-%}
+{%endif-%}

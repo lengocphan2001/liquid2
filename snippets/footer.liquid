@@ -1,0 +1,331 @@
+{% assign social = settings.fot_social %}    
+{% assign c1_title = settings.fot_c1_title %}
+{% assign c2_title = settings.fot_c2_title %}
+{% assign c2_menu = settings.fot_menu2 %}
+{% assign c3_title = settings.fot_c3_title %}
+{% assign c3_menu = settings.fot_menu3 %}
+{% assign c4_title = settings.fot_c4_title %}
+{% assign c4_menu = settings.fot_menu4 %}
+{% assign c4_content = settings.fot_c4_content -%}
+{% assign c5_title = settings.fot_c5_title %}
+{% assign copyright = settings.copyright %}
+{% assign btt = settings.backtotop_enable %}  
+
+
+<footer>
+	<div class="mid-footer">
+		<div class="container">
+			<div class="row">
+				<div class="col-lg-3">
+					<div class="footer-block footer-click">
+						{% if settings.fot_use_logo %}
+						<a href="/" class="logo-wrapper mb-3 d-block ">	
+							<img loading="lazy"
+								 src="{{ 'logo-footer.png'  | asset_url}}" 
+								 alt="logo {{ shop.name }}"
+								 width="{{settings.footer_logo_width}}" 
+								 height="{{settings.footer_logo_height}}">
+						</a>
+						{% endif %}
+						<div class="single-contact">
+							<i class="fa fa-map-marker-alt"></i>
+							<div class="content">Địa chỉ:
+								{%if settings.address and settings.address != '' -%}
+								<span>{{settings.address}}</span>
+								{%else%}
+								<span>{{ shop.address }}, {{shop.province}}, {{shop.country}}</span>
+								{%endif%}
+							</div>
+						</div>
+						<div class="single-contact">
+							<i class="fa fa-mobile-alt"></i>
+							<div class="content">
+								Số điện thoại: <a class="link" title="{{settings.phone | default: shop.phone_number | remove: ' '}}" href="tel:{{settings.phone | default: shop.phone_number | remove: ' '}}">{{settings.phone | default: shop.phone_number}}</a>
+							</div>
+						</div>
+						<div class="single-contact">
+							<i class="fa fa-envelope"></i>
+							<div class="content">
+								Email: <a title="{{settings.email | default:shop.customer_email }}" class="link" href="mailto:{{settings.email | default:shop.customer_email }}">{{settings.email | default:shop.customer_email }}</a>
+							</div>
+						</div>
+						
+						<div id="copyright" class="fot_copyright mt-3">
+							<span class="wsp">
+								© Bản quyền thuộc về 
+								<a href="https://egany.com" 
+									 rel="nofollow" 
+									 target="_blank">EGANY</a> | Cung cấp bởi {%if template contains 'index'%}<a href="https://www.haravan.com/?utm_campaign=poweredby&utm_medium=haravan&utm_source=onlinestore" rel="nofollow" title="Haravan" target="_blank">Haravan</a>{%else%}<a href="javascript:;">Haravan</a>{%endif%}
+							</span>
+						</div>
+					
+					</div>
+				</div>
+				<div class="col-lg-9">
+					<div class="row">
+						<div class="col-lg-4">
+							<div class="footer-block footer-click">
+								<h3 class="footer-title title-menu clicked">
+									{{c2_title}}
+									<i class="fa fa-angle-down d-md-none d-inline-block"></i>
+								</h3>
+								<ul class="list-menu toggle-mn" >
+									{% for link in linklists[c3_menu].links %}
+									<li class="li_menu">
+										<a class="link"  href="{{ link.url }}" title="{{link.title}}">{{ link.title }}</a>
+									</li>
+									{% endfor %}
+								</ul>
+							</div>
+						</div>
+						<div class="col-lg-4">
+							<div class="footer-block footer-click">
+								<h3 class="footer-title title-menu clicked">
+									{{c3_title}}
+									<i class="fa fa-angle-down d-md-none d-inline-block"></i>
+								</h3>
+								<ul class="list-menu toggle-mn" >
+									{% for link in linklists[c4_menu].links %}
+									<li class="li_menu">
+										<a class="link"  href="{{ link.url }}" title="{{link.title}}">{{ link.title }}</a>
+									</li>
+									{% endfor %}
+								</ul>
+							</div>
+						</div>
+						<div class="col-lg-4">
+							<div class="footer-block footer-click">
+								{%if settings.use_subs_fot-%} 
+								<h3 class="footer-title title-menu">{{settings.subs_fot_title-}}</h3>
+								<div class="form_register ">
+						<div class="custom-input-group mb-3 form_newsletter form_newsletter_customer" > 
+							{%- capture formFooter -%}
+							{%- form 'customer' -%}
+							<div class="input-group">
+								<input type="hidden" id="newsletter-tags" name="contact[tags]" value="khách hàng tiềm năng, bản tin" />     
+								<input class="form-control input-group-field " aria-label="Địa chỉ Email" type="email" placeholder="Nhập địa chỉ email"  id="newsletter-email" name="contact[email]"   pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$" required autocomplete="off" >
+							<div class="input-group-btn btn-action">
+								<button class="h-100 btn text-white button_subscribe subscribe" type="submit" aria-label="Đăng ký nhận tin" name="subscribe">Đăng ký</button>
+							</div>
+
+
+							</div>
+							<div class="sitebox-recaptcha hidden" >
+								This site is protected by reCAPTCHA and the Google
+								<a href="https://policies.google.com/privacy" target="_blank" rel="noreferrer">Privacy Policy</a> 
+								and <a href="https://policies.google.com/terms" target="_blank" rel="noreferrer">Terms of Service</a> apply.
+							</div>	
+							{%- if form.posted_successfully? -%}<p class="newsletter-success success feedback accent-text text-success mt-3">Cám ơn bạn đã đăng ký email theo dõi!</p>{% endif %}
+							{%- if form.errors -%}
+							<div class="error-box newsletter-error text-danger mt-3">
+								{%- for field in form.errors -%}
+								{{ field }}
+								{{ form.errors.messages[field] }}
+								{%- endfor -%} 
+							</div>
+							{%- endif -%}
+							{%- endform -%}
+							{%- endcapture -%}
+							{{ formFooter | replace:'script','noscript' }}
+						</div>
+					
+					</div>
+								{%endif-%}
+							{%if settings.use_socialshare_fot-%} 
+					
+							<ul class="follow_option d-flex flex-wrap align-items-center list-unstyled mt-2">	
+								{% if settings.social_facebook_link != blank %}
+								<li>
+									<a class="facebook link" href="{{settings.social_facebook_link}}"   target="_blank"
+									   title="Theo dõi Facebook {{shop.name}}">
+										<img src="{{'facebook.png' | asset_url}}" loading="lazy" width="32" height="32" alt="facebook"/>	
+									</a>
+								</li>
+								{% endif %}
+								{% if settings.social_zalo_link != blank %}
+								<li>
+									<a class="zalo link" href="{{settings.social_zalo_link}}"   target="_blank" title="Theo dõi zalo {{shop.name}}">
+										<img src="{{'zalo.png' | asset_url}}" loading="lazy" width="32" height="32" alt="zalo"/>	
+									</a>
+								</li>
+								{% endif %}
+								{% if settings.social_instagram_link != blank %}
+								<li>
+									<a class="instgram link" href="{{settings.social_instagram_link}}"   target="_blank" title="Theo dõi instgram {{shop.name}}">
+										<img src="{{'instagram.png' | asset_url}}" loading="lazy" width="32" height="32" alt="instgram"/>	
+									</a>
+								</li>
+								{% endif %}
+								{% if settings.social_youtube_link != blank -%}
+						<li>
+							<a class="youtube link" href="{{settings.social_youtube_link}}"   target="_blank" title="Theo dõi youtube {{shop.name}}">
+								<img src="{{'youtube.png' | asset_url}}" loading="lazy" width="36" height="36" alt="youtube"/>	
+							</a>
+						</li>
+						{% endif %}
+						{% if settings.social_tiktok_link != blank -%}
+						<li>
+							<a class="tiktok link" href="{{settings.social_tiktok_link}}"   target="_blank" title="Theo dõi tiktok {{shop.name}}">
+								<img src="{{'tiktok.png' | asset_url}}" loading="lazy" width="36" height="36" alt="tiktok"/>	
+							</a>
+						</li>
+						{% endif %}
+							</ul>
+							{%endif-%}
+							</div>
+								
+						</div>	
+					</div>
+					<div class="row">
+						
+						<div class="col-lg-4">
+								{%if settings.use_logo_bct-%}
+						<a class="d-inline-block mt-3" target="_blank" href="{{settings.logo_bct_url}}" title="{{settings.logo_bct_alt}}">
+							<img class="img-fluid" loading="lazy" 
+								 src="{{'logo_bct.png'|asset_url}}" 
+								 width="{{settings.logo_bct_width}}"
+								 height="{{settings.logo_bct_height}}"
+								 alt="{{settings.logo_bct_alt}}" />
+						</a>
+						{%endif -%}
+						</div>
+						<div class="col-lg-4">
+							
+								{%if settings.use_trustbadge_fot-%} 
+								<div class="trustbadge-wrap mt-4">
+								{%comment-%}	<h3 class="footer-title title-menu clicked">
+										{{settings.trustbadge_fot_title-}}HỖ TRỢ THANH TOÁN
+										<i class="fa fa-angle-down d-md-none d-inline-block"></i>
+									</h3> {%endcomment-%}
+									{%if settings.use_trustbadge_fot -%}
+									{%include 'trust-badge'%}
+									{%endif-%}
+								</div>
+								{%endif-%}
+						</div>
+					
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</footer>
+
+
+
+{%if settings.banner_popup_show-%} 
+<div class="modal fade" id="ega-modal-banner" tabindex="-1" role="dialog" aria-hidden="true">
+	<div class="modal-dialog modal-md align-vertical" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<a href="{{settings.banner_popup_url-}}">
+					<img loading="lazy" class="img-fluid" src="{{ 'banner-popup-img.png' | asset_url -}}" 
+						 alt="{{settings.banner_popup_alt-}}" width="{{settings.banner_popup_height}}" height="{{settings.banner_popup_height}}"/>
+				</a>
+				<button class="btn-form-close close" type="button" data-dismiss="modal" aria-label="Close"><i class="fa fa-times"></i></button>
+			</div>
+		</div>
+	</div>
+</div>
+{%endif-%}
+
+{%if template == "product"-%}
+	<div class="modal fade" id="ega-modal-share" tabindex="-1" role="dialog" aria-hidden="true">
+		<div class="modal-dialog modal-md align-vertical" role="document">
+			<button class="btn-form-close close" type="button" data-dismiss="modal" aria-label="Close"><i class="fa fa-times"></i></button>
+			<div class="modal-content">
+				<div class="modal-body">
+					<div class="form-group">
+						<label>Sao chép liên kết</label>
+						<input type="text" class="form-control" value="https:{{shop.url}}{{product.url}}">
+					</div>
+					{%if settings.product_share_enable-%}
+					<div class="form-group">
+						<label>Chia sẻ</label>						
+						{%include 'share-buttons'-%}
+					</div>
+					{%endif-%}
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<div class="modal fade" id="ega-modal-sizes" tabindex="-1" role="dialog" aria-hidden="true">
+		<div class="modal-dialog modal-lg align-vertical" role="document">
+			<button class="btn-form-close close" type="button" data-dismiss="modal" aria-label="Close"><i class="fa fa-times"></i></button>
+			<div class="modal-content">
+				<div class="modal-body">
+					{%assign size_guide_from = settings.size_guide_from-%}
+					{%if size_guide_from == "page"-%} 
+						{%assign size_page = settings.size_guide_page-%}
+						{%if pages[size_page].content and pages[size_page].content != blank%}
+						{{ pages[size_page].content -}}
+						{%else%}
+						<p class="ega-h4 ega-color--secondary">
+							Hướng dẫn đang được cập nhật
+						</p>
+						{%endif%}
+					{%else-%}
+						<div class="content_modal_size">
+							<div class="row">
+								<div class="col-md-4 col-12 d-none d-lg-block">
+									<a href="javascript:;">
+										<img src="{{product.featured_image.src | img_url: 'large'-}}" alt="{{product.name-}}">
+									</a>
+								</div>
+								<div class="col-md-8 col-12">
+									<div class="size-heading">
+										<h3>{{settings.size_guide_title-}}</h3>
+										<span class="text-secondary">
+											{{settings.size_guide_desc-}}
+										</span>
+									</div>
+									<h4>{{settings.size_value_title-}}</h4>
+									
+									{%for i in (1..2)-%} 
+									{%capture valueName-%}size_value_{{i-}}_name{%endcapture-%}
+									{%capture valueUnit-%}size_value_{{i-}}_unit{%endcapture-%}
+									{%capture valueMinmax-%}size_value_{{i-}}_minmax{%endcapture-%}
+									
+									{%assign minMaxValue = settings[valueMinmax] | split:"-"-%}
+									<div class="slider-box">
+										<span class="slider-title">{{settings[valueName]-}}</span>
+										<div class="slidecontainer">
+											<input type="range" min="{{minMaxValue[0]-}}" max="{{minMaxValue[1]-}}" value="{{minMaxValue[0]-}}" class="slider-input" data-type="value-{{i-}}">
+										</div>
+										<div class="slider-value text-right">
+											<span class="value-number">{{minMaxValue[0]}}</span> <span>{{settings[valueUnit]-}}</span>
+										</div>
+									</div>
+									{%endfor-%}
+									
+									<h4>{{settings.size_want_title-}}</h4>
+									<p>{{settings.size_want_subtitle-}}</p>
+									<div>
+										<div class="size-fit d-flex justify-content-between">
+											<span class="fit-item" data-value="0">Chật hơn</span>
+											<span class="fit-item actived" data-value="1">Hoàn hảo</span>
+											<span class="fit-item" data-value="2">Rộng hơn</span>
+										</div>
+									</div>
+									<input id="size-info" type="hidden">
+									<div id="result_size" class="hidden">
+										{{settings.size_result_title}} <span>XL</span>
+									</div>
+								</div>
+							</div>
+						</div>
+					{%endif-%}
+				</div>
+			</div>
+		</div>
+	</div>
+{%endif-%}
+
+<script type="text/x-custom-template" data-template="navigation">
+{%include 'main-nav-template'%} 
+</script>
+
+<script type="text/x-custom-template" data-template="menuMobile">
+{%include 'mobile-menu'%}
+</script>

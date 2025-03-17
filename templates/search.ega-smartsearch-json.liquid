@@ -1,0 +1,53 @@
+{%- layout none -%}
+{%- if search.results == empty -%}
+{
+  "results": []
+}
+{%- else -%}
+
+{%- assign search_type = 'product' -%}
+{%- for item in search.results limit: 1 -%}
+{%- if item.object_type == 'article' -%}
+{%- assign search_type = 'article' -%}
+{%- endif -%}
+{%- endfor -%}
+
+{%- assign product_limit = settings.ega_sm_product_limit | plus: 0 -%}
+{%- assign article_limit = settings.ega_sm_article_limit | plus: 0 -%}
+
+{%- if search_type == 'product' -%}
+{%- capture results -%}
+{%- for product in search.results limit: product_limit -%}
+{%- unless forloop.first -%},{%- endunless -%}{
+"title": {{- product.title | json -}}
+,"url": {{- product.url | json -}}
+,"image": "{{ product.featured_image.src }}"
+
+	{%- if product.price == 0 -%}
+	,"price": {{ product.price }}
+	{%- else -%}
+	,"price": {{ product.variants.first.price }}
+{%- if product.variants.first.compare_at_price > product.variants.first.price -%}
+	,"compare_at_price": {{ product.variants.first.compare_at_price }}
+{%- endif -%}
+	{% endif %}
+}
+{%- endfor -%}
+{%- endcapture -%}
+{%- endif -%}
+
+{%- if search_type == 'article' -%}
+{%- capture results -%}
+{%- for article in search.results limit: article_limit -%}
+{%- unless forloop.first -%},{%- endunless -%}{
+"title": {{- article.title | json -}}
+,"url": {{- article.url | json -}}
+,"image": "{{ article.image.src }}"
+}
+{%- endfor -%}
+{%- endcapture -%}
+{%- endif -%}
+{
+"results": [{{- results -}}]
+}
+{%- endif -%}
